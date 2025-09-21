@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from api.core.config import settings
 from api.core.logging import get_logger, setup_logging
 from api.src.users.routes import router as auth_router
+from api.src.workflows.routes import router as workflows_router
+from api.src.credentials.routes import router as credentials_router
 from api.utils.migrations import run_migrations
 
 # Set up logging configuration
@@ -21,6 +23,8 @@ app = FastAPI(
 
 # Include routers
 app.include_router(auth_router)
+app.include_router(credentials_router)
+app.include_router(workflows_router)
 
 
 @app.get("/health")

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str  # Change in production
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION: int = 30  # minutes
+    GOOGLE_API_KEY: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

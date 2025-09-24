@@ -1,7 +1,6 @@
 import httpx
 from pydantic import BaseModel
 
-
 from api.src.workflows.schemas_workflow import TelegramNodeInputs
 from api.workflow_engine.nodes.base import BaseNodeExecutor
 

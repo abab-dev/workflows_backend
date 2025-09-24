@@ -1,12 +1,14 @@
 import httpx
+from pydantic import BaseModel
 
+
+from api.src.workflows.schemas_workflow import TelegramNodeInputs
 from api.workflow_engine.nodes.base import BaseNodeExecutor
 
 
 class TelegramNodeExecutor(BaseNodeExecutor):
     async def execute(self, input_data: dict) -> dict:
         bot_token = self.credentials.get("bot_token")
-
         chat_id = self.parameters.chat_id
         message_text = self.parameters.message_text
 
@@ -22,3 +24,7 @@ class TelegramNodeExecutor(BaseNodeExecutor):
 
         print(f"Successfully sent Telegram message to chat_id {chat_id}")
         return {"status": "success", "response": response.json()}
+
+    @classmethod
+    def get_input_schema(cls) -> type[BaseModel]:
+        return TelegramNodeInputs

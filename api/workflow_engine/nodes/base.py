@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 from pydantic import BaseModel
 
 
@@ -11,4 +10,10 @@ class BaseNodeExecutor(ABC):
 
     @abstractmethod
     async def execute(self, input_data: dict) -> dict:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_input_schema(cls) -> type[BaseModel]:
+        """Returns the Pydantic model for the node's inputs."""
         pass

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.core.database import get_session
@@ -10,6 +10,7 @@ from api.src.workflows.schemas import (
     WorkflowUpdate,
 )
 from api.src.workflows.service import WorkflowService
+from api.workflow_engine.tasks import run_workflow_task
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
@@ -63,3 +64,14 @@ async def delete_workflow(
     current_user: User = Depends(get_current_user),
 ) -> None:
     await service.delete_workflow(workflow_id, current_user.id)
+
+
+@router.post("/{workflow_id}/execute", status_code=status.HTTP_202_ACCEPTED)
+async def execute_workflow(
+    workflow_id: int,
+    background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    background_tasks.add_task(run_workflow_task, workflow_id, current_user.id, session)
+    return {"message": "Workflow execution has been scheduled."}

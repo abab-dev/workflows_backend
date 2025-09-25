@@ -29,6 +29,9 @@ dependencies = [
     "langchain>=0.3.27",
     "langgraph>=0.6.7",
     "langchain-google-genai>=2.1.12",
+    "redis>=6.4.0",
+    "celery>=5.5.3",
+    "gevent>=25.9.1",
 ]
 
 [tool.pytest.ini_options]

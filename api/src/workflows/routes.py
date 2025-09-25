@@ -9,8 +9,9 @@ from api.src.workflows.schemas import (
     WorkflowResponse,
     WorkflowUpdate,
 )
-from api.src.workflows.service import WorkflowService
 from api.workflow_engine.tasks import run_workflow_task
+
+from api.src.workflows.service import WorkflowService
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
@@ -69,9 +70,11 @@ async def delete_workflow(
 @router.post("/{workflow_id}/execute", status_code=status.HTTP_202_ACCEPTED)
 async def execute_workflow(
     workflow_id: int,
-    background_tasks: BackgroundTasks,
-    session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
-    background_tasks.add_task(run_workflow_task, workflow_id, current_user.id, session)
+    run_workflow_task.delay(
+        workflow_id=workflow_id,
+        user_id=current_user.id,
+        initial_payload=None,
+    )
     return {"message": "Workflow execution has been scheduled."}

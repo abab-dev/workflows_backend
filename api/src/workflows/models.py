@@ -1,4 +1,6 @@
 from datetime import datetime
+import uuid
+
 
 from sqlalchemy import (
     Column,
@@ -7,6 +9,7 @@ from sqlalchemy import (
     Integer,
     JSON,
     String,
+    UUID,
     func,
 )
 from sqlalchemy.orm import relationship
@@ -22,7 +25,10 @@ class Workflow(Base):
     json_content = Column(JSON, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    webhook_token = Column(
+        UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True
+    )
+
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-
     owner = relationship("User")

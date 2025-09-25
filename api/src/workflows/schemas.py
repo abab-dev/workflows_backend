@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
+import uuid
 
 from .schemas_workflow import WorkflowContent
 
@@ -23,5 +24,6 @@ class WorkflowResponse(WorkflowBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
     user_id: int
+    webhook_token: uuid.UUID
     created_at: datetime
     updated_at: datetime

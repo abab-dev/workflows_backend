@@ -6,6 +6,7 @@ from api.src.users.routes import router as auth_router
 from api.src.workflows.routes import router as workflows_router
 from api.src.credentials.routes import router as credentials_router
 from api.src.workflow_runs.routes import router as workflow_runs_router
+from api.src.webhooks.routes import router as webhooks_router
 from api.utils.migrations import run_migrations
 
 # Set up logging configuration
@@ -22,6 +23,7 @@ app = FastAPI(
     debug=settings.DEBUG,
 )
 
+app.include_router(webhooks_router)
 # Include routers
 app.include_router(auth_router)
 app.include_router(credentials_router)

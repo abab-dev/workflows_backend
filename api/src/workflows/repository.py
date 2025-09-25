@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.core.exceptions import NotFoundException
 from api.src.workflows.models import Workflow
 from api.src.workflows.schemas import WorkflowCreate, WorkflowUpdate
+import uuid
 
 
 class WorkflowRepository:
@@ -60,3 +61,12 @@ class WorkflowRepository:
         )
         await self.session.execute(query)
         await self.session.commit()
+
+    async def get_by_webhook_token(self, token: uuid.UUID) -> Workflow:
+        query = select(Workflow).where(Workflow.webhook_token == token)
+        result = await self.session.execute(query)
+        workflow = result.scalar_one_or_none()
+
+        if not workflow:
+            raise NotFoundException("Workflow with the provided token not found")
+        return workflow

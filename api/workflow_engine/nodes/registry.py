@@ -2,12 +2,15 @@ from api.workflow_engine.nodes.telegram import TelegramNodeExecutor
 from api.workflow_engine.nodes.trigger import ManualTriggerNodeExecutor
 from api.workflow_engine.nodes.llm import LLMNodeExecutor
 from api.workflow_engine.nodes.langgraph import LangGraphNodeExecutor
+from api.workflow_engine.nodes.webhook import WebhookTriggerNodeExecutor
+
 
 NODE_EXECUTORS = {
     "manual_trigger": ManualTriggerNodeExecutor,
     "telegram": TelegramNodeExecutor,
     "llm": LLMNodeExecutor,
     "langgraph": LangGraphNodeExecutor,
+    "webhook_trigger": WebhookTriggerNodeExecutor,
 }
 
 

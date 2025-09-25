@@ -43,20 +43,23 @@ class WorkflowEngine:
             decrypted_value = await self.credential_service.get_decrypted_credential(
                 credential_id, self.user_id
             )
-
-            credentials["bot_token"] = decrypted_value
+            if node_type in ["llm", "langgraph"]:
+                credentials["google_api_key"] = decrypted_value
+            elif node_type == "telegram":
+                credentials["bot_token"] = decrypted_value
 
         ExecutorClass = get_node_executor(node_type)
         executor = ExecutorClass(node_id, validated_inputs, credentials)
         return await executor.execute(input_data)
 
-    async def run(self):
+    async def run(self, initial_payload: dict | None = None):
         start_node_id = self.content.startNodeId
         adjacency_list = {node.id: [] for node in self.content.nodes}
         for edge in self.content.edges:
             adjacency_list[edge.source].append(edge.target)
 
-        execution_queue = deque([(start_node_id, {})])
+        start_node_input = initial_payload if initial_payload is not None else {}
+        execution_queue = deque([(start_node_id, start_node_input)])
 
         while execution_queue:
             current_node_id, input_data = execution_queue.popleft()

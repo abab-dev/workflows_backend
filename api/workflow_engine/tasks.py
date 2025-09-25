@@ -7,7 +7,12 @@ from api.src.workflow_runs.repository import WorkflowRunRepository
 from api.workflow_engine.engine import WorkflowEngine
 
 
-async def run_workflow_task(workflow_id: int, user_id: int, session: AsyncSession):
+async def run_workflow_task(
+    workflow_id: int,
+    user_id: int,
+    session: AsyncSession,
+    initial_payload: dict | None = None,
+):
     run_repo = WorkflowRunRepository(session)
     run = await run_repo.create(workflow_id)
     print(f"Starting background task for workflow {workflow_id}, run {run.id}")
@@ -22,7 +27,7 @@ async def run_workflow_task(workflow_id: int, user_id: int, session: AsyncSessio
         validated_content = WorkflowContent.model_validate(workflow.json_content)
 
         engine = WorkflowEngine(validated_content, user_id, session)
-        result_context = await engine.run()
+        result_context = await engine.run(initial_payload=initial_payload)
 
         logs = json.dumps(result_context, indent=2)
         await run_repo.update_status(run.id, "SUCCESS", logs)

@@ -33,8 +33,11 @@ class AgentState(TypedDict):
 class LangGraphNodeExecutor(BaseNodeExecutor):
     async def execute(self, input_data: dict) -> dict:
         print("Executing LangGraph Agent Node")
+        api_key = self.credentials.get("google_api_key")
+        if not api_key:
+            raise ValueError("Missing Google API Key in credentials for LangGraph node")
         model = ChatGoogleGenerativeAI(
-            model=self.parameters.model_name, google_api_key=os.getenv("GOOGLE_API_KEY")
+            model=self.parameters.model_name, google_api_key=api_key
         )
         tools = [get_current_date]
         model_with_tools = model.bind_tools(tools)

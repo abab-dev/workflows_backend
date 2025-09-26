@@ -48,6 +48,14 @@ def run_workflow_task(
     initial_payload: dict | None = None,
 ):
     try:
-        asyncio.run(async_run_workflow(workflow_id, user_id, initial_payload))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            result = loop.run_until_complete(
+                async_run_workflow(workflow_id, user_id, initial_payload)
+            )
+            return result
+        finally:
+            loop.close()
     except Exception:
         raise

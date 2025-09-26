@@ -32,6 +32,7 @@ dependencies = [
     "redis>=6.4.0",
     "celery>=5.5.3",
     "gevent>=25.9.1",
+    "arq>=0.25.0",
 ]
 
 [tool.pytest.ini_options]

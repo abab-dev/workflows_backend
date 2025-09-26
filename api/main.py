@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
 from api.core.config import settings
 from api.core.logging import get_logger, setup_logging
@@ -8,23 +9,37 @@ from api.src.credentials.routes import router as credentials_router
 from api.src.workflow_runs.routes import router as workflow_runs_router
 from api.src.webhooks.routes import router as webhooks_router
 from api.utils.migrations import run_migrations
+from api.core.redis import (
+    create_redis_pool,
+    close_redis_pool,
+)
 
-# Set up logging configuration
+
 setup_logging()
 
-# Optional: Run migrations on startup
+
 run_migrations()
 
-# Set up logger for this module
+
 logger = get_logger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_redis_pool()
+    yield
+
+    await close_redis_pool()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     debug=settings.DEBUG,
+    lifespan=lifespan,
 )
 
 app.include_router(webhooks_router)
-# Include routers
+
 app.include_router(auth_router)
 app.include_router(credentials_router)
 app.include_router(workflows_router)

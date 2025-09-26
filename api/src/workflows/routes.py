@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, status, BackgroundTasks
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
+import arq
 
 from api.core.database import get_session
 from api.core.security import get_current_user
@@ -9,7 +10,8 @@ from api.src.workflows.schemas import (
     WorkflowResponse,
     WorkflowUpdate,
 )
-from api.workflow_engine.tasks import run_workflow_task
+
+from api.core.redis import get_redis_pool
 
 from api.src.workflows.service import WorkflowService
 
@@ -71,8 +73,10 @@ async def delete_workflow(
 async def execute_workflow(
     workflow_id: int,
     current_user: User = Depends(get_current_user),
+    redis: arq.ArqRedis = Depends(get_redis_pool),
 ):
-    run_workflow_task.delay(
+    await redis.enqueue_job(
+        "run_workflow",
         workflow_id=workflow_id,
         user_id=current_user.id,
         initial_payload=None,

@@ -31,4 +31,4 @@ class Workflow(Base):
 
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-    owner = relationship("User")
+    owner = relationship("User", back_populates="workflows")

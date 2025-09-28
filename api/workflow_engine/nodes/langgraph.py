@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from datetime import date
 from typing import Annotated, TypedDict
 
@@ -13,8 +12,6 @@ from pydantic import BaseModel
 
 from api.src.workflows.schemas_workflow import LangGraphNodeInputs
 from api.workflow_engine.nodes.base import BaseNodeExecutor
-
-load_dotenv()
 
 
 @tool

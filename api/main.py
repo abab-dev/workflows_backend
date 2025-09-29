@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.core.config import settings
 from api.core.logging import get_logger, setup_logging
@@ -36,6 +37,17 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     debug=settings.DEBUG,
     lifespan=lifespan,
+)
+origins = [
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # allow all headers
 )
 
 app.include_router(webhooks_router)
